@@ -20,6 +20,7 @@ int main()
 			 << "5.save\n"
 			 << "6.download\n"
 			 << "7.exit\n";
+		cout << "choose an action";
 		int id;
 		cin >> id;
 		switch (id)
@@ -34,7 +35,23 @@ int main()
 			}
 			case 3:
 			{
-				cout << "durik";
+				break;
+			}
+			case 4:
+			{
+				break;
+			}
+			case 5:
+			{
+				break;
+			}
+			case 6:
+			{
+				break;
+			}
+			case 7:
+			{
+				break;
 			}
 		}
 }
