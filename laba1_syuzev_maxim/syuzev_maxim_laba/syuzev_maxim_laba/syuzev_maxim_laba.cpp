@@ -1,88 +1,99 @@
 ﻿#include <iostream>
 #include <fstream>
 #include <string>
-#include <windows.h>
-#include <conio.h>
-
+#include <cctype>
 using namespace std;
 
-
+//функции станции
 struct CS
 {
 	string name;
-	int workshops=0,working_Shop,efficiency;
+	int workshops=0,working_Shop=0,efficiency=0;
 };
+
+int efficiency(int kol_r, int kol)
+{
+	return (kol_r * 100) / kol;
+}
+
+int input_validation() //https://www.cyberforum.ru/cpp-beginners/thread2532252.html
+{
+	int id;
+	while (!(cin >> id) || (cin.peek() != '\n'))
+	{
+		cin.clear();
+		while (cin.get() != '\n');
+		cout << "Ошибка ввода повторите ввод;" << endl;
+	}
+	return id;
+}
 
 void inputStation(CS& cs1)
 {
 	if (cs1.workshops > 0)
 	{
-		cout << "station sushestvuet" << "\n";
+		cout << "Станция уже существует" << "\n";
 	}
 	else
 	{
-			cout << "name station: ";
+			cout << "Название станции: ";
 			cin.clear();
 			cin.ignore();
 			getline(cin, cs1.name);
-			cout << "amount workshops: ";
-			cin >> cs1.workshops;
-			cout << "amount of working shops: ";
-			cin >> cs1.working_Shop;
-			cs1.efficiency = (cs1.working_Shop * 100) / cs1.workshops;
+			cout << "Кол-во цехов: ";
+			cs1.workshops= input_validation();
+			cout << "Кол-во цехов в работе: ";
+			cs1.working_Shop= input_validation();
+			cs1.efficiency = efficiency(cs1.working_Shop, cs1.workshops);
 	}
 };
-
 void checkCS(CS& cs1)
 {
-	while (cs1.workshops < 0)
+	while (cs1.workshops < 0) 
 	{
-		cout << "amount workshops again: ";
-		cin >> cs1.workshops;
+		cout << "Кол-во цехов не может быть отрицательным: "<<"\n";
+		cs1.workshops= input_validation();
 	}
 	while ((cs1.working_Shop > cs1.workshops) || (cs1.working_Shop < 0))
 	{
-		cout << "amount of working shops again: ";
-		cin >> cs1.working_Shop;
-		cs1.efficiency = (cs1.working_Shop * 100) / cs1.workshops;
+		cout << "Кол-во рабочих цехов не может быть отрицательным: ";
+		cs1.working_Shop= input_validation();
+		cs1.efficiency = efficiency(cs1.working_Shop, cs1.workshops);
 	}
 }
-
-void OutputStation(CS& station)
+void OutputStation(CS& cs1)
 {
-	if (station.workshops > 0)
+	//inputStation(cs1);
+	//checkCS(cs1);
+	if (cs1.workshops > 0)
 	{
-		cout << "name station: " << station.name << "\n";
-		cout << "amount workshops: " << station.workshops << "\n";
-		cout << "amount of working shops: " << station.working_Shop << "\n";
-		cout << "efficiency of prуcent: " << station.efficiency << "%" << "\n";
+		cout << "Название станции: " << cs1.name << "\n";
+		cout << "К-во цехов: " << cs1.workshops << "\n";
+		cout << "К-во работающих цехов: " << cs1.working_Shop << "\n";
+		cout << "Эффектичность работы станции: " << cs1.efficiency << "%" << "\n";
 	}
 	else
 	{
-		cout << "cs ne sozdana";
+		cout << "Компрессорная станция не создана"<<"\n";
 	}
+	system("pause");
 };
-
 void editStation(CS& cs1)
 {
 	if (cs1.workshops > 0)
 	{
-		cout << "amount of working shops: ";
-		cin >> cs1.working_Shop;
-		cs1.efficiency = (cs1.working_Shop * 100) / cs1.workshops;
-	}
-	else
-	{
-		cout << "staition ne sushestvuet";
+		cout << "Введите к-во рабочих цехов: ";
+		cs1.working_Shop= input_validation();
+		cs1.efficiency = efficiency(cs1.working_Shop,cs1.workshops);
 	}
 }
 
 
-
+//функции трубы
 struct pipe
 {
-	double length=0;
-	float diameter;
+	int length=0;
+    int diameter=0;
 	bool condition;
 };
 
@@ -90,77 +101,88 @@ void inputPipe(pipe& P1)
 {
 	if (P1.length > 0)
 	{
-		cout << "pipe sushestvuet" << "\n";
+		cout << "Труба уже создана" << "\n";
 	}
 	else
 	{
-		cout << "length pipe: ";
-		cin >> P1.length;
-		cout << "diameter pipe: ";
-		cin >> P1.diameter;
-		cout << "condition pipe: ";
-		cin >> P1.condition;
+		cout << "Длинна трубы в метрах: ";
+		P1.length= input_validation();
+		cout << "Диаметр трубы в метрах: ";
+		P1.diameter= input_validation();
+		cout << "Состояние трубы: ";
+		P1.condition= input_validation();
 	}
 		
 };
-
-void checkPIPE(pipe& p)
+void checkPipe(pipe& p)
 {
 	while (p.length <= 0)
 	{
-		cout << "length pipe: ";
-		cin >> p.length;
+		cout << "Повторите ввод длинны трубы так как значение отрицательное: ";
+		p.length= input_validation();
 	}
 	while (p.diameter <= 0)
 	{
-		cout << "diameter pipe: ";
-		cin >> p.diameter;
+		cout << "Повторите ввод диаметра трубы так, как значение отрицательное: ";
+		p.diameter= input_validation();
 	}
 }
-
-void editpipe(pipe& P1)
+void editPipe(pipe& P1)
 {
 	if (P1.length > 0)
 	{
-		cout << "condition pipe";
-		cin >> P1.condition;
+		if (P1.condition == 0)
+		{
+			P1.condition = true;
+		}
+		else
+		{
+			P1.condition = false;
+		}
+		cout << "Состояние трубы успешно изменено" << "\n";
 	}
-	else
-		cout << "truba ne sozdana"<<"\n";
+	
 }
-
 void OutputPipe(pipe& p)
 {
 	if (p.length > 0) 
-	{
-		cout << "length pipe: " << p.length << "\n"
-			<< "diametr pipe: " << p.diameter << "\n"
-			<< "condition pipe: " << p.condition << "\n";
+	{	
+		cout << "длинна трубы: " << p.length << "\n"
+			<< "диаметр трубы: " << p.diameter << "\n"
+			<< "Состояние трубы: ";
+		if (p.condition == true)
+		{
+			cout << "труба в ремонте" << "\n";
+		}
+		else
+		{
+			cout << "труба в работе" << "\n";
+		}
 	}
 	else
 	{
-		cout << "truba ne sozdana"<<"\n";
+		cout << "Труба не создана"<<"\n";
 	}
-	
+	system("pause");
 };
 
 
-
+//меню
 void menu()
 {
-	cout << "1.add pipe\n"
-		<< "2.add cs\n"
-		<< "3.view all objects\n"
-		<< "4.edit pipe\n"
-		<< "5.edit cs\n"
-		<< "6.save\n"
-		<< "7.download\n"
-		<< "8.exit\n"
+	cout << "1.Добавить трубу\n"
+		<< "2.Добавить компрессорную станцию\n"
+		<< "3.Показать все объекты\n"
+		<< "4.Редактировать состояние трубы\n"
+		<< "5.Редактировать кол-во работающих цехов станции\n"
+		<< "6.Сохранить\n"
+		<< "7.Загрузить данные\n"
+		<< "0.Выход\n"
 		<< "\n";
 }
 
 
-
+//вывод всех объектов
 void showALLobjects(pipe& p1,CS& cs1)
 {
 	OutputPipe(p1);
@@ -168,47 +190,92 @@ void showALLobjects(pipe& p1,CS& cs1)
 }
 
 
-
+//работа с файлом
 void save_in_file(const pipe& p1,const CS& cs1)
 {
-	ofstream f_inf;
-	f_inf.open("fileLR1.txt", ios::out);
-	f_inf << p1.length << "\n"
-		<< p1.diameter << "\n"
-		<< p1.condition << "\n"
-		<< cs1.name << "\n"
-		<< cs1.working_Shop << "\n"
-		<< cs1.workshops << "\n"
-		<< cs1.efficiency << "\n";
-	f_inf.close();
-}
-
-void read_on_file(pipe& p1, CS& cs1)
-{ 
-	ifstream f_inf;
-	f_inf.open("fileLR1.txt", ios::in);
-	
-	//https://www.youtube.com/watch?v=aUP0eAEIxog
-	if (!f_inf.is_open())
+	if ((p1.length > 0)||(cs1.workshops>0))
 	{
-		cout << "error";
+		ofstream f_inf;
+		f_inf.open("fileLR1.txt", ios::out);
+		f_inf << p1.length << "\n"
+			<< p1.diameter << "\n"
+			<< p1.condition << "\n"
+			<< cs1.name << "\n"
+			<< cs1.workshops << "\n"
+			<< cs1.working_Shop << "\n"
+			<< cs1.efficiency << "\n";
+		f_inf.close();
+		cout << "Данные сохранены в файл" << "\n";
 	}
 	else
 	{
-		cout<<("file is open")<<"\n";
-		f_inf >> p1.length
-			>> p1.diameter
-			>> p1.condition;
-		f_inf.ignore();
-		getline(f_inf,cs1.name);
-		f_inf	>> cs1.working_Shop 
-				>> cs1.workshops 
-				>> cs1.efficiency ;
+		cout << "Создайте объект";
+	}
+	system("pause");
+}
+void read_on_file(pipe& p1, CS& cs1)
+{ 
+	string none,noneinfile;
+	ifstream f_inf;
+	f_inf.open("fileLR1.txt", ios::in);
 
+	//https://www.youtube.com/watch?v=aUP0eAEIxog
+	if (!f_inf.is_open())
+	{
+		cout << "ошибка открытия файла";
+	}
+	else
+	{
+		//https://ru.stackoverflow.com/questions/1294751/%D0%9A%D0%B0%D0%BA-%D0%BF%D1%80%D0%BE%D0%B2%D0%B5%D1%80%D0%B8%D1%82%D1%8C-%D1%81%D1%83%D1%89%D0%B5%D1%81%D1%82%D0%B2%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-%D1%81%D1%82%D1%80%D0%BE%D0%BA%D0%B8-%D0%B2-%D1%84%D0%B0%D0%B9%D0%BB%D0%B5
+		cout << ("файл открыт") << "\n";
+			f_inf >> p1.length
+				>> p1.diameter
+				>> p1.condition;
+			f_inf.ignore();
+			getline(f_inf, cs1.name);
+			f_inf >> cs1.working_Shop
+				>> cs1.workshops
+				>> cs1.efficiency;
 	}
 	f_inf.close();
 	system("pause");
 }
+
+void exitANDsave_in_file(const pipe& p1, const CS& cs1)
+{
+	bool yes_or_no;
+	cout << "Вы выходите из программы не хотите сохранить введенные данные?";
+	cin >> yes_or_no;
+	if (yes_or_no == true)
+	{
+		save_in_file(p1, cs1);
+	}
+	else
+	{
+		cout << "Фаил остался без изменений";
+	}
+}
+
+void saveornotsave(const pipe& p1, const CS& cs1, bool sostsave)
+{
+	if (sostsave == true)
+	{
+		cout << "Файл уже содержит эти данные сохранение не нужно";
+	}
+	else
+	{
+		save_in_file(p1, cs1);
+	}
+}
+
+void exitandsaveornosave(const pipe& p1, const CS& cs1, bool sostsave)
+{
+	if (sostsave == false)
+	{
+		exitANDsave_in_file(p1, cs1);
+	}
+}
+
 
 
 int main()
@@ -216,50 +283,55 @@ int main()
 	pipe P;
 	CS cs1;
 	int id;
+	bool save = true;
+	//https://code-live.ru/post/cpp-russian-locale-for-windows-cmd/
+	setlocale(LC_ALL, "Russian");
 	do
 	{
 		system("cls");
 		menu();
-		cout << "choose an action: ";
-		cin.clear();
-		cin >> id;
+		cout << "Выберите пункт меню: ";
+		id= input_validation();
 			switch (id)
 			{
 				case 1:
 					inputPipe(P);
-					checkPIPE(P);
+					checkPipe(P);
 					OutputPipe(P);
-					system("pause");
+					save = false;
 					break;
 				case 2:
 					inputStation(cs1);
 					checkCS(cs1);
 					OutputStation(cs1);
-					system("pause");
+					save = false;
 					break;
 				case 3:
 					showALLobjects(P, cs1);
-					system("pause");
 					break;
 				case 4:
-					editpipe(P);
+					editPipe(P);
 					OutputPipe(P);
-					system("pause");
+					save = false;
 					break;
 				case 5:
 					editStation(cs1);
+					checkCS(cs1);
 					OutputStation(cs1);
-					system("pause");
+					save = false;
+					break;
 				case 6:
-					save_in_file(P, cs1);
+					saveornotsave(P, cs1,save);
+					save = true;
 					break;
 				case 7:
 					read_on_file(P, cs1);
+					save = true;
 					break;
-				case 8:
-					id = 8;
+				case 0:
+					exitandsaveornosave(P, cs1, save);
 					break;
 			}
-	} while (id != 8);
+	} while (id != 0);
 	return 0;
 }
