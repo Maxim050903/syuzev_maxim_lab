@@ -1,7 +1,7 @@
 ﻿#include <iostream>
 #include <fstream>
 #include <string>
-#include <cctype>
+
 using namespace std;
 
 //функции станции
@@ -16,16 +16,21 @@ int efficiency(int kol_r, int kol)
 	return (kol_r * 100) / kol;
 }
 
-int input_validation() //https://www.cyberforum.ru/cpp-beginners/thread2532252.html
+void input_validation(int& id) //https://www.cyberforum.ru/cpp-beginners/thread2532252.html
 {
-	int id;
-	while (!(cin >> id) || (cin.peek() != '\n'))
+	while (!(cin >> id) || (cin.peek() != '\n')||(id<=0))
 	{
 		cin.clear();
 		while (cin.get() != '\n');
 		cout << "Ошибка ввода повторите ввод;" << endl;
 	}
-	return id;
+}
+void min_max(int& workshops, int& working_Shop)
+{
+	do
+	{
+		input_validation(working_Shop);
+	} while (working_Shop > workshops);
 }
 
 void inputStation(CS& cs1)
@@ -41,30 +46,17 @@ void inputStation(CS& cs1)
 			cin.ignore();
 			getline(cin, cs1.name);
 			cout << "Кол-во цехов: ";
-			cs1.workshops= input_validation();
+			input_validation(cs1.workshops);
 			cout << "Кол-во цехов в работе: ";
-			cs1.working_Shop= input_validation();
+			min_max(cs1.workshops, cs1.working_Shop);
 			cs1.efficiency = efficiency(cs1.working_Shop, cs1.workshops);
 	}
+
 };
-void checkCS(CS& cs1)
-{
-	while (cs1.workshops < 0) 
-	{
-		cout << "Кол-во цехов не может быть отрицательным: "<<"\n";
-		cs1.workshops= input_validation();
-	}
-	while ((cs1.working_Shop > cs1.workshops) || (cs1.working_Shop < 0))
-	{
-		cout << "Кол-во рабочих цехов не может быть отрицательным: ";
-		cs1.working_Shop= input_validation();
-		cs1.efficiency = efficiency(cs1.working_Shop, cs1.workshops);
-	}
-}
+
+
 void OutputStation(CS& cs1)
 {
-	//inputStation(cs1);
-	//checkCS(cs1);
 	if (cs1.workshops > 0)
 	{
 		cout << "Название станции: " << cs1.name << "\n";
@@ -76,14 +68,15 @@ void OutputStation(CS& cs1)
 	{
 		cout << "Компрессорная станция не создана"<<"\n";
 	}
-	system("pause");
 };
 void editStation(CS& cs1)
 {
 	if (cs1.workshops > 0)
 	{
+		cout << "Кол-во цехов станции";
+		cout << cs1.workshops;
 		cout << "Введите к-во рабочих цехов: ";
-		cs1.working_Shop= input_validation();
+		input_validation(cs1.working_Shop);
 		cs1.efficiency = efficiency(cs1.working_Shop,cs1.workshops);
 	}
 }
@@ -106,27 +99,15 @@ void inputPipe(pipe& P1)
 	else
 	{
 		cout << "Длинна трубы в метрах: ";
-		P1.length= input_validation();
+		input_validation(P1.length);
 		cout << "Диаметр трубы в метрах: ";
-		P1.diameter= input_validation();
-		cout << "Состояние трубы: ";
-		P1.condition= input_validation();
+		input_validation(P1.diameter);
+		cout << "Состояние трубы (0 труба в работе;другое значение труба в ремонте) : ";
+		input_validation(P1.diameter);
 	}
 		
 };
-void checkPipe(pipe& p)
-{
-	while (p.length <= 0)
-	{
-		cout << "Повторите ввод длинны трубы так как значение отрицательное: ";
-		p.length= input_validation();
-	}
-	while (p.diameter <= 0)
-	{
-		cout << "Повторите ввод диаметра трубы так, как значение отрицательное: ";
-		p.diameter= input_validation();
-	}
-}
+
 void editPipe(pipe& P1)
 {
 	if (P1.length > 0)
@@ -163,7 +144,6 @@ void OutputPipe(pipe& p)
 	{
 		cout << "Труба не создана"<<"\n";
 	}
-	system("pause");
 };
 
 
@@ -211,7 +191,6 @@ void save_in_file(const pipe& p1,const CS& cs1)
 	{
 		cout << "Создайте объект";
 	}
-	system("pause");
 }
 void read_on_file(pipe& p1, CS& cs1)
 { 
@@ -236,9 +215,12 @@ void read_on_file(pipe& p1, CS& cs1)
 			f_inf >> cs1.working_Shop
 				>> cs1.workshops
 				>> cs1.efficiency;
+			if (p1.length == 0)
+			{
+				cout << "файл пуст";
+			}
 	}
 	f_inf.close();
-	system("pause");
 }
 
 void exitANDsave_in_file(const pipe& p1, const CS& cs1)
@@ -288,21 +270,20 @@ int main()
 	setlocale(LC_ALL, "Russian");
 	do
 	{
-		system("cls");
 		menu();
 		cout << "Выберите пункт меню: ";
-		id= input_validation();
+		input_validation(id);
 			switch (id)
 			{
 				case 1:
 					inputPipe(P);
-					checkPipe(P);
+					//checkPipe(P);
 					OutputPipe(P);
 					save = false;
 					break;
 				case 2:
 					inputStation(cs1);
-					checkCS(cs1);
+					//checkCS(cs1);
 					OutputStation(cs1);
 					save = false;
 					break;
@@ -316,7 +297,7 @@ int main()
 					break;
 				case 5:
 					editStation(cs1);
-					checkCS(cs1);
+					//checkCS(cs1);
 					OutputStation(cs1);
 					save = false;
 					break;
