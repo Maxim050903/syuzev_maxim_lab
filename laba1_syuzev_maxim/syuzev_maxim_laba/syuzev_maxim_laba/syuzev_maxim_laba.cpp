@@ -266,8 +266,7 @@ int main()
 	CS cs1;
 	int id;
 	bool save = true;
-	//https://code-live.ru/post/cpp-russian-locale-for-windows-cmd/
-	setlocale(LC_ALL, "Russian");
+	setlocale(LC_ALL, "Russian");//https://code-live.ru/post/cpp-russian-locale-for-windows-cmd/
 	do
 	{
 		menu();
@@ -277,13 +276,11 @@ int main()
 			{
 				case 1:
 					inputPipe(P);
-					//checkPipe(P);
 					OutputPipe(P);
 					save = false;
 					break;
 				case 2:
 					inputStation(cs1);
-					//checkCS(cs1);
 					OutputStation(cs1);
 					save = false;
 					break;
@@ -297,7 +294,6 @@ int main()
 					break;
 				case 5:
 					editStation(cs1);
-					//checkCS(cs1);
 					OutputStation(cs1);
 					save = false;
 					break;
