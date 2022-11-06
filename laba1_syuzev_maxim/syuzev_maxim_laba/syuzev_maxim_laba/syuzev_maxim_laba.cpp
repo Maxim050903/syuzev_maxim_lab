@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -10,104 +11,129 @@ struct CS
 	string name;
 	int workshops=0,working_Shop=0,efficiency=0;
 };
-
-int efficiency(int kol_r, int kol)
+struct pipe
 {
-	return (kol_r * 100) / kol;
-}
-
-void input_validation(int& id) //https://www.cyberforum.ru/cpp-beginners/thread2532252.html
+	int length = 0;
+	int diameter = 0;
+	bool condition = 0;
+};
+template <typename T>
+T GetCorrectNumber(T min, T max)
 {
-	while (!(cin >> id) || (cin.peek() != '\n')||(id<=0))
+	T x;
+	while ((cin >> x).fail() || x<min || x>max)
 	{
 		cin.clear();
-		while (cin.get() != '\n');
-		cout << "Ошибка ввода повторите ввод;" << endl;
+		cin.ignore(10000, '\n');
+		cout << "oshibka";
+	}
+	return x;
+}
+template <typename V>
+void GetCorrectNumbers(V& x)
+{
+	while ((cin >> x).fail()|| x<0)
+	{
+		cout << "oshibka vvoda dannih";
+		cin.clear();
+		cin.ignore(10000, '\n');
 	}
 }
-void min_max(int& workshops, int& working_Shop)
+template <typename OB>
+OB& SelectOB(vector<OB>& g)
 {
-	do
-	{
-		input_validation(working_Shop);
-	} while (working_Shop > workshops);
+	cout << "ddtlbnt byltrc ";
+	unsigned long long int index = GetCorrectNumber(1ull, (g.size()));
+	return g[index-1];
 }
-
-void inputStation(CS& cs1)
+istream& operator >> (istream& in, CS& cs)
 {
-	if (cs1.workshops > 0)
+	if (cs.workshops > 0)
 	{
 		cout << "Станция уже существует" << "\n";
 	}
 	else
 	{
-			cout << "Название станции: ";
-			cin.clear();
-			cin.ignore();
-			getline(cin, cs1.name);
-			cout << "Кол-во цехов: ";
-			input_validation(cs1.workshops);
-			cout << "Кол-во цехов в работе: ";
-			min_max(cs1.workshops, cs1.working_Shop);
-			cs1.efficiency = efficiency(cs1.working_Shop, cs1.workshops);
+		cout << "Название станции: ";
+		cin.clear();
+		cin.ignore();
+		getline(cin, cs.name);
+		cout << "Кол-во цехов: ";
+		GetCorrectNumbers(cs.working_Shop);
+		cout << "Кол-во цехов в работе: ";
+		cs.workshops = GetCorrectNumber(0, cs.working_Shop);
+		cout << "Введите значение эффективности станции от 0 до 100";
+		cs.efficiency = GetCorrectNumber(0, 100);
 	}
-
-};
-
-
-void OutputStation(CS& cs1)
+	return in;
+}
+ostream& operator <<(ostream& out, const pipe& p)
 {
-	if (cs1.workshops > 0)
+	if (p.length > 0)
 	{
-		cout << "Название станции: " << cs1.name << "\n";
-		cout << "К-во цехов: " << cs1.workshops << "\n";
-		cout << "К-во работающих цехов: " << cs1.working_Shop << "\n";
-		cout << "Эффектичность работы станции: " << cs1.efficiency << "%" << "\n";
+		out << "длинна трубы: " << p.length << "\n"
+			<< "диаметр трубы: " << p.diameter << "\n"
+			<< "Состояние трубы: ";
+		if (p.condition == true)
+		{
+			out << "труба в ремонте" << "\n";
+		}
+		else
+		{
+			out << "труба в работе" << "\n";
+		}
 	}
 	else
 	{
-		cout << "Компрессорная станция не создана"<<"\n";
+		out << "Труба не создана" << "\n";
 	}
-};
-void editStation(CS& cs1)
-{
-	if (cs1.workshops > 0)
-	{
-		cout << "Кол-во цехов станции";
-		cout << cs1.workshops;
-		cout << "Введите к-во рабочих цехов: ";
-		input_validation(cs1.working_Shop);
-		cs1.efficiency = efficiency(cs1.working_Shop,cs1.workshops);
-	}
+	return out;
 }
-
-
-//функции трубы
-struct pipe
+istream& operator >> (istream& in, pipe& p)
 {
-	int length=0;
-    int diameter=0;
-	bool condition;
-};
-
-void inputPipe(pipe& P1)
-{
-	if (P1.length > 0)
+	if (p.length > 0)
 	{
 		cout << "Труба уже создана" << "\n";
 	}
 	else
 	{
-		cout << "Длинна трубы в метрах: ";
-		input_validation(P1.length);
-		cout << "Диаметр трубы в метрах: ";
-		input_validation(P1.diameter);
-		cout << "Состояние трубы (0 труба в работе;другое значение труба в ремонте) : ";
-		input_validation(P1.diameter);
+		do
+		{
+			in.clear();
+			in.ignore(10000, '\n');
+			cout << "Длинна трубы в метрах: ";
+			GetCorrectNumbers(p.length);
+			cout << "Диаметр трубы в метрах: ";
+			GetCorrectNumbers(p.diameter);
+			cout << "Состояние трубы (0 труба в работе;другое значение труба в ремонте) : ";
+			GetCorrectNumbers(p.condition);
+		} while (cin.fail());
 	}
-		
-};
-
+	return in;
+}
+ostream& operator <<(ostream& out, const CS& cs)
+{
+	if (cs.workshops > 0)
+	{
+		cout << "Название станции: " << cs.name << "\n";
+		cout << "К-во цехов: " << cs.workshops << "\n";
+		cout << "К-во работающих цехов: " << cs.working_Shop << "\n";
+		cout << "Эффектичность работы станции: " << cs.efficiency << "%" << "\n";
+	}
+	else
+	{
+		cout << "Компрессорная станция не создана" << "\n";
+	}
+	return out;
+}
+void editStation(CS& cs)
+{
+	if (cs.workshops > 0)
+	{
+		cout << "vvedite novoe kolvo cehov";
+		cs.working_Shop=GetCorrectNumber(0, cs.workshops);
+	}
+}
 void editPipe(pipe& P1)
 {
 	if (P1.length > 0)
@@ -124,80 +150,65 @@ void editPipe(pipe& P1)
 	}
 	
 }
-void OutputPipe(pipe& p)
+void showALLobjects(const vector<pipe>& p, const vector<CS>& g)
 {
-	if (p.length > 0) 
-	{	
-		cout << "длинна трубы: " << p.length << "\n"
-			<< "диаметр трубы: " << p.diameter << "\n"
-			<< "Состояние трубы: ";
-		if (p.condition == true)
+	unsigned long long int i;
+	for (i = 0; i < p.size(); i++)
+	{
+		if (p[i].length > 0)
 		{
-			cout << "труба в ремонте" << "\n";
+			cout << "index:" << i + 1 << '\n' << p[i];
 		}
 		else
 		{
-			cout << "труба в работе" << "\n";
+			cout << "truba yt cjplfyf kb,j elfktyf";
 		}
 	}
-	else
+	cout << "\n";
+	for (i = 0;i < g.size();i++)
 	{
-		cout << "Труба не создана"<<"\n";
+		if (g[i].working_Shop > 0)
+		{
+			cout << "index:" << i + 1 << '\n' << g[i];
+		}
+		else
+		{
+			cout << "station not found";
+		}
 	}
-};
-
-
-//меню
-void menu()
-{
-	cout << "1.Добавить трубу\n"
-		<< "2.Добавить компрессорную станцию\n"
-		<< "3.Показать все объекты\n"
-		<< "4.Редактировать состояние трубы\n"
-		<< "5.Редактировать кол-во работающих цехов станции\n"
-		<< "6.Сохранить\n"
-		<< "7.Загрузить данные\n"
-		<< "0.Выход\n"
-		<< "\n";
-}
-
-
-//вывод всех объектов
-void showALLobjects(pipe& p1,CS& cs1)
-{
-	OutputPipe(p1);
-	OutputStation(cs1);
+	cout << "\n";
 }
 
 
 //работа с файлом
-void save_in_file(const pipe& p1,const CS& cs1)
+void save_in_file(const vector<pipe>& p,const vector<CS>& g)
 {
-	if ((p1.length > 0)||(cs1.workshops>0))
+	ofstream f_inf;
+	f_inf.open("fileLR1.txt", ios::out);
+	f_inf << p.size()<<'\n';
+	unsigned long long int i;
+	for (i = 0; i < p.size(); i++)
 	{
-		ofstream f_inf;
-		f_inf.open("fileLR1.txt", ios::out);
-		f_inf << p1.length << "\n"
-			<< p1.diameter << "\n"
-			<< p1.condition << "\n"
-			<< cs1.name << "\n"
-			<< cs1.workshops << "\n"
-			<< cs1.working_Shop << "\n"
-			<< cs1.efficiency << "\n";
-		f_inf.close();
+		f_inf << p[i].length << "\n"
+			<< p[i].diameter << "\n"
+			<< p[i].condition << "\n";
+	}
+	f_inf << g.size() << '\n';
+	for (i = 0; i < g.size(); i++)
+	{
+		f_inf<< g[i].name << "\n"
+			<< g[i].workshops << "\n"
+			<< g[i].working_Shop << "\n"
+			<< g[i].efficiency << "\n";
+	}
+	f_inf.close();
 		cout << "Данные сохранены в файл" << "\n";
-	}
-	else
-	{
-		cout << "Создайте объект";
-	}
+	
 }
-void read_on_file(pipe& p1, CS& cs1)
+void read_on_file(vector<pipe>& p, vector<CS>& g)
 { 
-	string none,noneinfile;
 	ifstream f_inf;
 	f_inf.open("fileLR1.txt", ios::in);
-
 	//https://www.youtube.com/watch?v=aUP0eAEIxog
 	if (!f_inf.is_open())
 	{
@@ -207,108 +218,163 @@ void read_on_file(pipe& p1, CS& cs1)
 	{
 		//https://ru.stackoverflow.com/questions/1294751/%D0%9A%D0%B0%D0%BA-%D0%BF%D1%80%D0%BE%D0%B2%D0%B5%D1%80%D0%B8%D1%82%D1%8C-%D1%81%D1%83%D1%89%D0%B5%D1%81%D1%82%D0%B2%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-%D1%81%D1%82%D1%80%D0%BE%D0%BA%D0%B8-%D0%B2-%D1%84%D0%B0%D0%B9%D0%BB%D0%B5
 		cout << ("файл открыт") << "\n";
-			f_inf >> p1.length
-				>> p1.diameter
-				>> p1.condition;
+		unsigned long long int i;
+		int index;
+		f_inf >> index;
+		p.resize(index); //https://bestprogrammer.ru/programmirovanie-i-razrabotka/kak-rasshirit-vektor-v-c
+		for (i = 0;i < index;i++)
+		{
+			f_inf >> p[i].length
+				>> p[i].diameter
+				>> p[i].condition;
+		}
+		f_inf >> index;
+		g.resize(index); //https://bestprogrammer.ru/programmirovanie-i-razrabotka/kak-rasshirit-vektor-v-c
+		for (i = 0;i < index;i++)
+		{
 			f_inf.ignore();
-			getline(f_inf, cs1.name);
-			f_inf >> cs1.working_Shop
-				>> cs1.workshops
-				>> cs1.efficiency;
-			if (p1.length == 0)
-			{
-				cout << "файл пуст";
-			}
+			getline(f_inf, g[i].name);
+			f_inf >> g[i].working_Shop
+				>> g[i].workshops
+				>> g[i].efficiency;
+		}
 	}
 	f_inf.close();
 }
-
-void exitANDsave_in_file(const pipe& p1, const CS& cs1)
-{
-	bool yes_or_no;
-	cout << "Вы выходите из программы не хотите сохранить введенные данные?";
-	cin >> yes_or_no;
-	if (yes_or_no == true)
-	{
-		save_in_file(p1, cs1);
-	}
-	else
-	{
-		cout << "Фаил остался без изменений";
-	}
-}
-
-void saveornotsave(const pipe& p1, const CS& cs1, bool sostsave)
+void saveornotsave(vector<pipe>& p, vector<CS>& g, bool sostsave)
 {
 	if (sostsave == true)
 	{
-		cout << "Файл уже содержит эти данные сохранение не нужно";
+		cout << "Сохранение не выполнено";
 	}
 	else
 	{
-		save_in_file(p1, cs1);
+		save_in_file(p, g);
 	}
 }
-
-void exitandsaveornosave(const pipe& p1, const CS& cs1, bool sostsave)
+void Deleteobject(vector<pipe>& p, vector<CS>& g)
 {
-	if (sostsave == false)
+	bool ob;
+	cout << "viberete kakoi tip obecta budet udalen";
+	GetCorrectNumbers(ob);
+	if (ob = true)
 	{
-		exitANDsave_in_file(p1, cs1);
+		cout << "vvedite index elementa";
+		int iddelete = GetCorrectNumber(0ull, p.size());
+		for (int i = iddelete;i < p.size()-1;i++)
+		{
+			p[i].length = p[i + 1].length;
+			p[i].diameter = p[i + 1].diameter;
+			p[i].condition = p[i + 1].condition;
+		}
+		p.resize(p.size() - 1);
+	}
+	else
+	{
+		cout << "vvedite index elementa";
+		int iddelete = GetCorrectNumber(0ull, g.size());
+		for (int i = iddelete;i < g.size() - 1;i++)
+		{
+			g[i].name = g[i + 1].name;
+			g[i].workshops = g[i + 1].workshops;
+			g[i].working_Shop = g[i + 1].working_Shop;
+		}
+		g.resize(g.size() - 1);
 	}
 }
 
-
+void menu()
+{
+	cout << "1.Добавить трубу\n"
+		<< "2.Добавить компрессорную станцию\n"
+		<< "3.Показать все объекты\n"
+		<< "4.Редактировать состояние трубы\n"
+		<< "5.Редактировать кол-во работающих цехов станции\n"
+		<< "6.Сохранить\n"
+		<< "7.Загрузить данные\n"
+		<< "8.Удаление объекта\n"
+		<< "0.Выход\n"
+		<< "\n"
+		<< "Выберите пункт меню: ";
+}
 
 int main()
 {
-	pipe P;
-	CS cs1;
-	int id;
+	vector <pipe> pipe_group;
+	vector <CS> cs_group;
 	bool save = true;
 	setlocale(LC_ALL, "Russian");//https://code-live.ru/post/cpp-russian-locale-for-windows-cmd/
-	do
+	while (1)
 	{
 		menu();
-		cout << "Выберите пункт меню: ";
-		input_validation(id);
-			switch (id)
+		
+		switch (GetCorrectNumber(0, 9))
+		{
+			case 1:
 			{
-				case 1:
-					inputPipe(P);
-					OutputPipe(P);
-					save = false;
-					break;
-				case 2:
-					inputStation(cs1);
-					OutputStation(cs1);
-					save = false;
-					break;
-				case 3:
-					showALLobjects(P, cs1);
-					break;
-				case 4:
-					editPipe(P);
-					OutputPipe(P);
-					save = false;
-					break;
-				case 5:
-					editStation(cs1);
-					OutputStation(cs1);
-					save = false;
-					break;
-				case 6:
-					saveornotsave(P, cs1,save);
-					save = true;
-					break;
-				case 7:
-					read_on_file(P, cs1);
-					save = true;
-					break;
-				case 0:
-					exitandsaveornosave(P, cs1, save);
-					break;
+				pipe p;
+				cin >> p;
+				cout << p;
+				pipe_group.push_back(p);
+				save = false;
+				break;
 			}
-	} while (id != 0);
+			case 2:
+			{
+				CS cs;
+				cin >> cs;
+				cout << cs;
+				cs_group.push_back(cs);
+				save = false;
+				break;
+			}
+			case 3:
+			{
+				showALLobjects(pipe_group,cs_group);
+				break;
+			}
+			case 4:
+			{
+				editPipe(SelectOB(pipe_group));
+				save = false;
+				break;
+			}
+			case 5:
+			{
+				editStation(SelectOB(cs_group));
+				save = false;
+				break;
+			}
+			case 6:
+			{
+				save_in_file(pipe_group, cs_group);
+				save = true;
+				break;
+			}
+			case 7:
+			{
+				read_on_file(pipe_group, cs_group);
+				save = true;
+				break;
+			}
+			case 8:
+			{
+				Deleteobject(pipe_group,cs_group);
+				save = false;
+				break;
+			}
+			case 9:
+			{
+				//cout << Object_Search(pipe_group, cs_group);
+				break;
+			}
+			case 0:
+			{
+				saveornotsave(pipe_group, cs_group,save);
+				return 0;
+				break;
+			}
+		}
+	} 
 	return 0;
 }
