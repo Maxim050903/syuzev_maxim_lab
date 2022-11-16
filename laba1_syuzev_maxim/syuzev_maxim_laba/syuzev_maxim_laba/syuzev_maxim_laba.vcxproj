@@ -139,7 +139,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Cpipe.cpp" />
+    <ClCompile Include="CS.cpp" />
     <ClCompile Include="syuzev_maxim_laba.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Cpipe.h" />
+    <ClInclude Include="CS.h" />
+    <ClInclude Include="Utilits.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
