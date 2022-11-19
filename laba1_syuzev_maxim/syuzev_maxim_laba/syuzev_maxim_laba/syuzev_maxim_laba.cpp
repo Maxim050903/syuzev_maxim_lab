@@ -48,18 +48,17 @@ void showobject(map<int,T>& p)
 		}
 	}
 }
-void save_in_file(map <int,pipe>& p,map <int,CS>& g)
+void save_in_file(const map <int,pipe>& p,map <int,CS>& g)
 {
 	ofstream f_inf;
 	f_inf.open("fileLR1.txt", ios::out);
 	f_inf << p.size()<<'\n';
-	unsigned long long int i;
-	for (i=0;i<p.size();i++)
+	for (const auto& [k, v] : p)
 	{
-		f_inf<<p[i].name << "\n"
-			<< p[i].length << "\n"
-			<< p[i].diameter << "\n"
-			<< p[i].condition << "\n";
+		f_inf<<v.name << "\n"
+			<< v.length << "\n"
+			<< v.diameter << "\n"
+			<< v.condition << "\n";
 	}
 	f_inf << g.size() << '\n';
 	for (i = 0; i < g.size(); i++)
@@ -138,14 +137,14 @@ void Deleteobject(map <int, pipe>& p, unsigned long long int idpmax, map<int, CS
 	{
 		if (p.size() != 0)
 		{
-			cout << "Введите номер объекта от :1 до: "<<idpmax << "\n";
-			int iddelete = GetCorrectNumber(1ull, idpmax)-1;
+			cout << "Введите номер объекта от :1 до: " << idpmax << "\n";
+			int iddelete = GetCorrectNumber(1ull, idpmax) - 1;
 			auto it = p.find(iddelete);
-			if (it!=p.end())
+			if (it != p.end())
 			{
 				p.erase(iddelete);
 				cout << "Объект удалён\n";
-			} 
+			}
 			else
 			{
 				cout << "Объект уже был удален\n";
@@ -230,8 +229,7 @@ void showFilterMenu()
 	cout << "1. Фильтр по имени труб\n"
 		<< "2. Фильтр по состоянию труб\n"
 		<< "3. Фильтр по имени станции\n"
-		<< "4. Фильтр по проценту цехов\n"
-		<< "0. Выход\n";
+		<< "4. Фильтр по проценту цехов\n";
 }
 void filterobject(map<int,pipe>& pipe_group,map <int,CS> cs_group)
 {
@@ -282,10 +280,6 @@ switch (GetCorrectNumber(0, 4))
 		}
 		break;
 	}
-	case 0:
-	{
-		break;
-	}
 	}
 }
 void menu()
@@ -299,6 +293,7 @@ void menu()
 		<< "7.Загрузить данные\n"
 		<< "8.Удаление объекта\n"
 		<< "9.Фильтр объектов\n"
+		<<"10.Редактирование объектов с использованием фильтра\n"
 		<< "0.Выход\n"
 		<< "\n"
 		<< "Выберите пункт меню: ";
