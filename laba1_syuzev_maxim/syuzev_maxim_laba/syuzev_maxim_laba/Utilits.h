@@ -22,4 +22,3 @@ void GetCorrectNumbers(V& x)
 		std::cin.ignore(10000, '\n');
 	}
 }
-

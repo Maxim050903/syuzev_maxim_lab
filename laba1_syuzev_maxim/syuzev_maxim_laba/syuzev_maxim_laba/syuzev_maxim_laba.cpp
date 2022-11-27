@@ -6,6 +6,8 @@
 #include "CS.h"
 #include "Utilits.h"
 #include <map>
+
+
 using namespace std;
 template <typename OB>
 OB& SelectOB(map<int,OB>& g)
@@ -14,59 +16,83 @@ OB& SelectOB(map<int,OB>& g)
 		unsigned long long int index = GetCorrectNumber(1ull, (g.size()));
 		return g[index - 1];
 }
-void editStation(CS& cs)
+bool checkCSname(const CS& p, std::string name)
 {
-	cout << "Введите новое число работающих цехов (от :0 до :" << cs.working_Shop << ")";
-	cs.working_Shop = GetCorrectNumber(0, cs.workshops);
+	return p.name == name;
 }
-void editPipe(pipe& P1)
+bool checkprocent(const CS& p, int procent)
 {
-	if (P1.condition == 0)
+	return procent >= (p.working_Shop * 100) / p.workshops;
+}
+template<typename T>
+using Filter2 = bool(*)(const CS& g, T sost);
+template<typename T>
+vector<int>	FindCSByFilter(const map<int, CS>& p, Filter2<T> f, T param)
+{
+	vector <int> res;
+	for (const auto& [k, v] : p)
 	{
-		P1.condition = true;
+		if (f(v, param))
+		{
+			res.push_back(k);
+		}
 	}
-	else
+	return res;
+}
+bool checkname(const pipe& p, std::string name)
+{
+	return p.name == name;
+}
+bool checkcondition(const pipe& p, bool condition)
+{
+	return p.condition == condition;
+}
+template<typename T>
+using Filter = bool(*)(const pipe& p, T sost);
+template<typename T>
+vector<int> FindPipeByFilter(const map<int, pipe>& p, Filter<T> f, const T param)
+{
+	vector <int> res;
+	for (const auto& [k, v] : p)
 	{
-		P1.condition = false;
+		if (f(v, param))
+		{
+			res.push_back(k);
+		}
 	}
-	cout << "Состояние трубы успешно изменено" << "\n";
-
+	return res;
 }
 template <typename T>
-void showobject(map<int,T>& p)
+void showobject(const map<int,T>& p)
 {
-	unsigned long long int i;
 	if (p.size() == 0)
 	{
 		cout << "Объектов не существует."<<"\n";
 	}
 	else
 	{
-		for (i = 0;i < p.size();i++)
+		for (const auto&[k,v]:p)
 		{
-			cout << p[i];
+			cout <<"id объекта: " << k << "\n";
+			cout << v;
 		}
 	}
 }
-void save_in_file(const map <int,pipe>& p,map <int,CS>& g)
+void save_in_file(const map <int,pipe>& p,const map <int,CS>& g)
 {
 	ofstream f_inf;
 	f_inf.open("fileLR1.txt", ios::out);
 	f_inf << p.size()<<'\n';
 	for (const auto& [k, v] : p)
 	{
-		f_inf<<v.name << "\n"
-			<< v.length << "\n"
-			<< v.diameter << "\n"
-			<< v.condition << "\n";
+		f_inf << k << endl;
+		f_inf << v << endl;
 	}
 	f_inf << g.size() << '\n';
-	for (i = 0; i < g.size(); i++)
+	for (const auto& [k,v] : g)
 	{
-		f_inf <<g[i].name << "\n"
-			<< g[i].workshops << "\n"
-			<< g[i].working_Shop << "\n"
-			<< g[i].efficiency << "\n";
+		f_inf << k << "\n";
+		f_inf << v << "\n";
 	}
 	f_inf.close();
 		cout << "Данные сохранены в файл" << "\n";
@@ -85,30 +111,25 @@ void read_on_file(map<int,pipe>& p, map<int,CS>& g)
 	{
 		//https://ru.stackoverflow.com/questions/1294751/%D0%9A%D0%B0%D0%BA-%D0%BF%D1%80%D0%BE%D0%B2%D0%B5%D1%80%D0%B8%D1%82%D1%8C-%D1%81%D1%83%D1%89%D0%B5%D1%81%D1%82%D0%B2%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-%D1%81%D1%82%D1%80%D0%BE%D0%BA%D0%B8-%D0%B2-%D1%84%D0%B0%D0%B9%D0%BB%D0%B5
 		cout << ("файл открыт") << "\n";
-		unsigned long long int i;
 		int index;
 		f_inf >> index;
-		for (i = 0;i < index;i++)
+		for (int i=0;i<index;i++)
 		{
-			f_inf.ignore();
-			getline(f_inf, p[i].name);
-			f_inf>> p[i].length
-				>> p[i].diameter
-				>> p[i].condition;
+			int k;
+			f_inf >> k;
+			f_inf >> p[k];
 		}
 		f_inf >> index;
-		for (i = 0;i < index;i++)
+		for (int i=0;i<index;i++)
 		{
-			f_inf.ignore();
-			getline(f_inf, g[i].name);
-			f_inf >> g[i].workshops
-				>> g[i].working_Shop
-				>> g[i].efficiency;
+			int k;
+			f_inf >> k;
+			f_inf >> g[k];
 		}
 	}
 	f_inf.close();
 }
-void saveornotsave(map<int,pipe>& p, map <int,CS>& g, bool& sostsave)
+void saveornotsave(const map<int,pipe>& p,const map <int,CS>& g, bool& sostsave)
 {
 	if (sostsave == false)
 	{
@@ -178,52 +199,6 @@ void Deleteobject(map <int, pipe>& p, unsigned long long int idpmax, map<int, CS
 		}
 	}
 }
-template<typename T>
-using Filter = bool(*)(const pipe& p, T sost);
-bool checkname(const pipe& p,const string name)
-{
-	return p.name == name;
-}
-bool checkcondition(const pipe& p, bool condition)
-{
-	return p.condition == condition;
-}
-template<typename T>
-vector<int> FindPipeByFilter(map<int,pipe>& p,Filter<T> f,const T param)
-{
-	vector <int> res;
-	for (int i = 0;i < p.size(); i++)
-	{
-		if (f(p[i], param))
-		{
-			res.push_back(i);
-		}
-	}
-	return res;
-}
-template<typename T>
-using Filter2 = bool(*)(const CS& g, T sost);
-bool checkname(const CS& p, string name)
-{
-	return p.name == name;
-}
-bool checkprocent(const CS&p,int procent)
-{
-	return procent <=(100- ((p.workshops * 100) / p.working_Shop));
-}
-template<typename T>
-vector<int>	FindCSByFilter(map<int,CS>& p, Filter2<T> f,T param)
-{
-	vector <int> res;
-	for (int i = 0;i < p.size(); i++)
-	{
-		if (f(p[i], param))
-		{
-			res.push_back(i);
-		}
-	}
-	return res;
-}
 void showFilterMenu()
 {
 	cout << "1. Фильтр по имени труб\n"
@@ -264,9 +239,9 @@ switch (GetCorrectNumber(0, 4))
 		cin.clear();
 		cin.ignore();
 		getline(cin, name);
-		for (int i = 0;i < FindCSByFilter(cs_group, checkname, name).size();i++)
+		for (int i = 0;i < FindCSByFilter(cs_group, checkCSname, name).size();i++)
 		{
-			cout << cs_group[FindCSByFilter(cs_group, checkname, name)[i]];
+			cout << cs_group[FindCSByFilter(cs_group, checkCSname, name)[i]];
 		}
 		break;
 	}
@@ -343,7 +318,7 @@ int main()
 			}
 			case 5:
 			{
-				editStation(SelectOB(cs_group));
+				SelectOB(cs_group).editStation();
 				save = false;
 				break;
 			}
@@ -375,12 +350,15 @@ int main()
 			case 10:
 			{
 				bool condition;
+				cout << "vvedite sostoianie objekta: ";
 				GetCorrectNumbers(condition);
-				for (int i = 0;i < FindPipeByFilter(pipe_group, checkcondition, condition).size();i++)
+				vector <int> obj = FindPipeByFilter(pipe_group, checkcondition, condition);
+				for (int i=0;i<obj.size();i++)
 				{
-					editPipe(pipe_group[FindPipeByFilter(pipe_group, checkcondition, condition)[i]]);
+					int k;
+					cin >> k;
+					if (obj[i]==k)
 				}
-				showobject(pipe_group);
 				save = true;
 				break;
 			}
