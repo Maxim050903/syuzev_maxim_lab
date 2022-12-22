@@ -13,6 +13,7 @@ class pipe
 	friend void editPipe(pipe& P1);
 	friend bool checkname(const pipe& p, std::string name);
 	friend bool checkcondition(const pipe& p, bool condition);
+	friend bool checkdiameter(const pipe& p, int diameter);
 
 	friend std::ifstream& operator >> (std::ifstream& in, pipe& p);
 	friend std::ofstream& operator << (std::ofstream& out, const pipe& p);
